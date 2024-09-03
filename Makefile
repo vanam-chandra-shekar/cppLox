@@ -1,5 +1,5 @@
-INCLUDEDIR = Lox
-SOURCEDIR = . Lox
+INCLUDEDIR = Lox Scanner
+SOURCEDIR = . Lox Scanner
 LIBDIR = 
 BINDIR = bin
 LANGUAGE = cpp

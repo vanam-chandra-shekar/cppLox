@@ -1,0 +1,23 @@
+#pragma once
+
+
+enum TokenType {
+    // Single-character tokens.
+    TLEFT_PAREN, TRIGHT_PAREN, TLEFT_BRACE, TRIGHT_BRACE,
+    TCOMMA, TDOT, TMINUS, TPLUS, TSEMICOLON, TSLASH, TSTAR,
+
+    // One or two character tokens.
+    TBANG, TBANG_EQUAL,
+    TEQUAL, TEQUAL_EQUAL,
+    TGREATER, TGREATER_EQUAL,
+    TLESS, TLESS_EQUAL,
+
+    // Literals.
+    TIDENTIFIER, TSTRING, TNUMBER,
+
+    // Keywords.
+    TAND, TCLASS, TELSE, TFALSE, TFUN, TFOR, TIF, TNIL, TOR,
+    TPRINT, TRETURN, TSUPER, TTHIS, TTRUE, TVAR, TWHILE,
+
+    TEOF
+};

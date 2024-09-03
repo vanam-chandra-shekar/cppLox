@@ -1,2 +1,3 @@
 -I./Lox
+-I./Scanner
 --std=c++20

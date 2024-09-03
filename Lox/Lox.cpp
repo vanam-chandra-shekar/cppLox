@@ -1,9 +1,14 @@
 #include "Lox.hpp"
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <vector>
+
+#include "Scanner.hpp"
 
 
+bool Lox::hadError = false;
 
 void  Lox::main(int argL , char** arg)
 {
@@ -39,6 +44,8 @@ void Lox::runFile(const std::string &path)
     file.read(&str[0], sz);
 
     run(str);
+
+    if(hadError) exit(65);
 }
 
 void Lox::runPromt()
@@ -50,10 +57,29 @@ void Lox::runPromt()
         std::getline(std::cin , line);
         if(std::cin.eof()) break;  // ends if EOF is encountered
         run(line);
+        hadError = false;
     }
 }
 
 void Lox::run(const std::string& src)
 {
-    std::cout<<src<<"\n";
+    Scanner scanner(src);
+    std::vector<Token> tokens = scanner.scanTokens();
+
+
+    for(Token token : tokens)
+    {
+        std::cout<<token<<"\n";
+    }
+}
+
+void Lox::error(int line, const std::string &message)
+{
+    report(line, "", message);
+}
+
+void Lox::report(int line , const std::string& where , const std::string& message)
+{
+    std::cerr<<"[Line "<<line<<"] Error "+where +": "+message<<"\n";
+    hadError = false;
 }
