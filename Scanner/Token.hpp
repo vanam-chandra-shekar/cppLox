@@ -1,11 +1,13 @@
 #pragma once
 #include "TokenType.hpp"
+#include <cstddef>
 #include <ostream>
 #include <type_traits>
 #include <variant>
 #include <string>
 
-typedef std::variant<double , bool> Object;
+// A type used to store amany types it is a type safe union
+typedef std::variant<std::nullptr_t , double , bool , std::string > Object;
 
 class Token
 {
@@ -22,17 +24,29 @@ public:
 
 private:
     friend std::ostream& operator<<(std::ostream& out , const Token& token);
+
+    // converts a Objecct aka std::variant<std::nullptr_t , double , bool , std::string> to a String
     inline std::string objToString() const
     {
         std::string literalStr = std::visit([](auto&& arg) -> std::string{
+            //Gets the Dacayed type of args
+            //std::decay_t converts decayed type to orginal type
             using T = std::decay_t<decltype(arg)>;
 
+            // std::is_same_v checks if two types are same
             if constexpr ( std::is_same_v<T, bool> )
             {
                 return ((arg)? "true" : "false");
             }
-            else
+            else if constexpr ( std::is_same_v<T , std::nullptr_t>)
             {
+                return "null";
+            }
+            else if constexpr ( std::is_same_v<T , std::string>)
+            {
+                return arg;
+            }
+            else {
                 return std::to_string(arg);
             }
         },literal);
@@ -41,6 +55,7 @@ private:
     }
 };
 
+// operatorOverload of << operator for Token class
 inline std::ostream& operator<<(std::ostream& out , const Token& token)
 {
     out<<token.type<<" "<<token.lexeme<<" "<< token.objToString()<<"\n";

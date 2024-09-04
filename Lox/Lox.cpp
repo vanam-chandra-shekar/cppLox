@@ -66,7 +66,6 @@ void Lox::run(const std::string& src)
     Scanner scanner(src);
     std::vector<Token> tokens = scanner.scanTokens();
 
-
     for(Token token : tokens)
     {
         std::cout<<token<<"\n";

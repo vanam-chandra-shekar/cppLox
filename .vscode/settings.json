@@ -1,0 +1,11 @@
+{
+    "makefile.makefilePath": "",
+    "makefile.makePath": "mingw32-make",
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "e:\\cppLox",
+            "binaryPath": "e:\\cppLox\\main",
+            "binaryArgs": []
+        }
+    ]
+}
