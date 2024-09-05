@@ -1,4 +1,4 @@
-INCLUDEDIR = Lox Scanner
+INCLUDEDIR = Lox Scanner TreeNodes
 SOURCEDIR = . Lox Scanner
 LIBDIR = 
 BINDIR = bin
@@ -41,7 +41,7 @@ LINKFLG = $(LIBDIR) $(LIBRARIES)
 
 VPATH = $(SOURCEDIR)
 
-.PHONY: all clean run runScript
+.PHONY: all clean run runScript genAst
 
 all:$(TARGET)
 
@@ -63,6 +63,9 @@ run: all
 
 runScript: all script.txt
 	$(SILENT).\$(TARGET) script.txt
+
+genAst:
+	@ python.exe .\Tools\GenerateAst.py
 
 clean:
 	$(echo)echo ===== CLEANING =====
