@@ -1,5 +1,5 @@
-INCLUDEDIR = Lox Scanner TreeNodes
-SOURCEDIR = . Lox Scanner
+INCLUDEDIR = Lox Scanner generated_ast
+SOURCEDIR = . Lox Scanner generated_ast
 LIBDIR = 
 BINDIR = bin
 LANGUAGE = cpp

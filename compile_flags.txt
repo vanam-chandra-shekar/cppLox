@@ -1,4 +1,5 @@
 -I./Lox
 -I./Scanner
 -I.
+-I./generated_ast
 --std=c++20
