@@ -1,3 +1,4 @@
+#pragma once
 #include <memory>
 #include <any>
 #include "Token.hpp"
@@ -24,7 +25,7 @@ public:
 	virtual ~Visitor() = default;
 };
 
-class Expr::Binary : Expr , public std::enable_shared_from_this<Binary> {
+class Expr::Binary : public Expr , public std::enable_shared_from_this<Binary> {
 public:
 	std::shared_ptr<Expr> left;
 	Token op;
@@ -38,7 +39,7 @@ public:
 	}
 };
 
-class Expr::Grouping : Expr , public std::enable_shared_from_this<Grouping> {
+class Expr::Grouping : public Expr , public std::enable_shared_from_this<Grouping> {
 public:
 	std::shared_ptr<Expr> expression;
 
@@ -50,7 +51,7 @@ public:
 	}
 };
 
-class Expr::Literal : Expr , public std::enable_shared_from_this<Literal> {
+class Expr::Literal : public Expr , public std::enable_shared_from_this<Literal> {
 public:
 	Object value;
 
@@ -62,7 +63,7 @@ public:
 	}
 };
 
-class Expr::Unary : Expr , public std::enable_shared_from_this<Unary> {
+class Expr::Unary : public Expr , public std::enable_shared_from_this<Unary> {
 public:
 	Token op;
 	std::shared_ptr<Expr> right;

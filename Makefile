@@ -1,4 +1,4 @@
-INCLUDEDIR = Lox Scanner generated_ast
+INCLUDEDIR = Lox Scanner generated_ast AstPrinter
 SOURCEDIR = . Lox Scanner generated_ast
 LIBDIR = 
 BINDIR = bin
@@ -66,6 +66,9 @@ runScript: all script.txt
 
 genAst:
 	@ python.exe .\Tools\GenerateAst.py
+
+astPrint:
+	@ $(CXX) $(CXXFLAGS) AstPrinter/AstPrinter.cpp -o ast
 
 clean:
 	$(echo)echo ===== CLEANING =====

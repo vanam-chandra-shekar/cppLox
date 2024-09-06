@@ -11,7 +11,7 @@ typedef std::variant<std::nullptr_t , double , bool , std::string > Object;
 
 class Token
 {
-
+public:
     const TokenType type;
     const std::string lexeme;
     const Object literal;

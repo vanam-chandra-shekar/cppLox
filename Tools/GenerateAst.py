@@ -39,6 +39,7 @@ def parse(subClasses : str):
 
 def writeClassDeclarations(writer , baseClass , data):
 
+    writer.write("#pragma once\n")
     writer.write("#include <memory>\n")
     writer.write("#include <any>\n")
     writer.write("#include \"Token.hpp\"\n\n")
@@ -70,7 +71,7 @@ def writeVisitorImpl(writer , baseClass , data):
 def writeSubClassImpl(writer , baseClass , data):
 
     for subClassName in data.keys():
-        writer.write(f'class {baseClass}::{subClassName} : {baseClass} , public std::enable_shared_from_this<{subClassName}> {{\n')
+        writer.write(f'class {baseClass}::{subClassName} : public {baseClass} , public std::enable_shared_from_this<{subClassName}> {{\n')
         writer.write("public:\n")
 
         constructorArgs = []
