@@ -6,6 +6,8 @@
 #include <vector>
 
 #include "Scanner.hpp"
+#include "Parser.hpp"
+#include "AstPrinter.hpp"
 
 
 bool Lox::hadError = false;
@@ -64,21 +66,38 @@ void Lox::runPromt()
 void Lox::run(const std::string& src)
 {
     Scanner scanner(src);
-    std::vector<Token> tokens = scanner.scanTokens();
+    std::vector<Token>& tokens = scanner.scanTokens();
+    Parser parser(tokens);
+    
+    std::shared_ptr<Expr> expr = parser.parse();
 
-    for(Token token : tokens)
-    {
-        std::cout<<token<<"\n";
-    }
+    if(hadError) return;
+
+    std::cout<<AstPrinter{}.print(expr)<<"\n";
+
+
 }
 
-void Lox::error(int line, const std::string &message)
+void Lox::error(int line, const std::string_view &message)
 {
     report(line, "", message);
 }
 
-void Lox::report(int line , const std::string& where , const std::string& message)
+    
+void Lox::error(Token token , const std::string_view& message)
 {
-    std::cerr<<"[Line "<<line<<"] Error "+where +": "+message<<"\n";
+    if(token.type == TEOF)
+    {
+        report(token.line , " at end " , message);
+    }
+    else
+    {
+        report(token.line , " at '"+token.lexeme+"'" , message);
+    }
+}
+
+void Lox::report(int line , const std::string_view& where , const std::string_view& message)
+{
+    std::cerr<<"[Line "<<line<<"] Error "<<where <<": "<<message<<"\n";
     hadError = false;
 }

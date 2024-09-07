@@ -1,5 +1,5 @@
-INCLUDEDIR = Lox Scanner generated_ast AstPrinter
-SOURCEDIR = . Lox Scanner generated_ast
+INCLUDEDIR = Lox Scanner generated_ast Parser AstPrinter
+SOURCEDIR = . Lox Scanner generated_ast Parser
 LIBDIR = 
 BINDIR = bin
 LANGUAGE = cpp

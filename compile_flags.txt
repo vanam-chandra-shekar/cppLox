@@ -2,4 +2,6 @@
 -I./Scanner
 -I.
 -I./generated_ast
+-I./Parser
+-I./AstPrinter
 --std=c++20
