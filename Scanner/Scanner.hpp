@@ -39,7 +39,7 @@ private:
     void number();
     void identifier();
 
-    void addToken(TokenType type , Object literal);
+    void addToken(TokenType type , std::any literal);
     void addToken(TokenType type);
 
     

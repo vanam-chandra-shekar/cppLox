@@ -4,4 +4,5 @@
 -I./generated_ast
 -I./Parser
 -I./AstPrinter
+-I./Interpreter
 --std=c++20

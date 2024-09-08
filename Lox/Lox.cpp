@@ -5,12 +5,14 @@
 #include <string>
 #include <vector>
 
+#include "AstPrinter.hpp"
 #include "Scanner.hpp"
 #include "Parser.hpp"
-#include "AstPrinter.hpp"
 
 
 bool Lox::hadError = false;
+bool Lox::hadRuntimeError = false;
+Interpreter Lox::interpreter;
 
 void  Lox::main(int argL , char** arg)
 {
@@ -48,6 +50,7 @@ void Lox::runFile(const std::string &path)
     run(str);
 
     if(hadError) exit(65);
+    if(hadRuntimeError) exit(70);
 }
 
 void Lox::runPromt()
@@ -56,8 +59,7 @@ void Lox::runPromt()
     for(;;)
     {
         std::cout<<"> ";
-        std::getline(std::cin , line);
-        if(std::cin.eof()) break;  // ends if EOF is encountered
+        if(!std::getline(std::cin , line)) break;
         run(line);
         hadError = false;
     }
@@ -67,13 +69,16 @@ void Lox::run(const std::string& src)
 {
     Scanner scanner(src);
     std::vector<Token>& tokens = scanner.scanTokens();
+
     Parser parser(tokens);
     
     std::shared_ptr<Expr> expr = parser.parse();
 
     if(hadError) return;
 
-    std::cout<<AstPrinter{}.print(expr)<<"\n";
+    // std::cout<<AstPrinter{}.print(expr)<<"\n";
+        
+   interpreter.interpret(expr);
 
 
 }
@@ -100,4 +105,10 @@ void Lox::report(int line , const std::string_view& where , const std::string_vi
 {
     std::cerr<<"[Line "<<line<<"] Error "<<where <<": "<<message<<"\n";
     hadError = false;
+}
+
+void Lox::runTimeError(const RuntimeError& error)
+{
+    std::cerr<<error.what() <<"[line :" << error.token.line << "]";
+    hadRuntimeError = true;
 }

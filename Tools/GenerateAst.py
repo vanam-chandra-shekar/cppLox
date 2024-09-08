@@ -105,6 +105,6 @@ if not os.path.exists(outDir):
 define_ast(outDir, "Expr", [
     "Binary   ::: std::shared_ptr<Expr> left , Token op , std::shared_ptr<Expr> right",
     "Grouping ::: std::shared_ptr<Expr> expression",
-    "Literal  ::: Object value",
+    "Literal  ::: std::any value",
     "Unary    ::: Token op, std::shared_ptr<Expr> right"
 ])

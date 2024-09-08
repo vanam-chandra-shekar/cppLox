@@ -51,11 +51,11 @@ char Scanner::advance()
     return source.at(current++);
 }
 
-void Scanner::addToken(TokenType type , Object literal)
+void Scanner::addToken(TokenType type , std::any literal)
 {
     //current-start says length of the substring
     std::string sub = source.substr(start , current - start);
-    tokens.emplace_back(type , sub , literal , line);
+    tokens.emplace_back(type , sub , std::move(literal) , line);
 }
 
 void Scanner::addToken(TokenType type)

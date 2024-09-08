@@ -2,7 +2,6 @@
 
 #include <sstream>
 #include <string>
-#include <variant>
 #include <assert.h>
 #include "Expr.hpp"
 
@@ -26,21 +25,21 @@ public:
 
     std::any visitLiteralExpr(std::shared_ptr<Expr::Literal> expr) override
     {
-        if(std::holds_alternative<std::nullptr_t>(expr->value))
+        if(expr->value.type() == typeid(std::nullptr_t))
         {
             return "nil";
         }
-        else if(std::holds_alternative<std::string>(expr->value))
+        else if(expr->value.type() == typeid(std::string))
         {
-            return std::get<std::string>(expr->value);
+            return std::any_cast<std::string>(expr->value);
         }
-        else if(std::holds_alternative<double>(expr->value))
+        else if(expr->value.type() == typeid(double))
         {
-            return std::to_string(std::get<double>(expr->value));
+            return std::to_string(std::any_cast<double>(expr->value));
         }
-        else if(std::holds_alternative<bool>(expr->value))
+        else if(expr->value.type() == typeid(bool))
         {
-            return (std::get<bool>(expr->value) ? "true" : "false");
+            return (std::any_cast<bool>(expr->value) ? "true" : "false");
         }
 
         return "Error in visitLiteralExpr : literal type not recognized. ";

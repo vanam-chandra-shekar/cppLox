@@ -53,9 +53,9 @@ public:
 
 class Expr::Literal : public Expr , public std::enable_shared_from_this<Literal> {
 public:
-	Object value;
+	std::any value;
 
-	Literal(Object _value)
+	Literal(std::any _value)
 		: value(std::move(_value)) {}
 
 	inline std::any accept(Visitor& visitor) override {

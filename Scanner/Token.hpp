@@ -1,24 +1,25 @@
 #pragma once
 #include "TokenType.hpp"
-#include <cstddef>
+// #include <cstddef>
 #include <ostream>
-#include <type_traits>
-#include <variant>
+// #include <variant>
 #include <string>
+#include <any>
 
 // A type used to store amany types it is a type safe union
-typedef std::variant<std::nullptr_t , double , bool , std::string > Object;
+// typedef std::variant<std::nullptr_t , double , bool , std::string > Object;
+// typedef std::any Object;
 
 class Token
 {
 public:
     const TokenType type;
     const std::string lexeme;
-    const Object literal;
+    const std::any literal;
     const int line;
 
 public:
-    Token(const TokenType& _type , const std::string& _lexeme ,const Object& _literal , const int& _line )
+    Token(const TokenType& _type , const std::string& _lexeme ,const std::any& _literal , const int& _line )
         : type(_type) , lexeme(_lexeme) , literal(_literal) ,line(_line)
     {}
 
@@ -28,30 +29,27 @@ private:
     // converts a Objecct aka std::variant<std::nullptr_t , double , bool , std::string> to a String
     inline std::string objToString() const
     {
-        std::string literalStr = std::visit([](auto&& arg) -> std::string{
-            //Gets the Dacayed type of args
-            //std::decay_t converts decayed type to orginal type
-            using T = std::decay_t<decltype(arg)>;
 
-            // std::is_same_v checks if two types are same
-            if constexpr ( std::is_same_v<T, bool> )
-            {
-                return ((arg)? "true" : "false");
-            }
-            else if constexpr ( std::is_same_v<T , std::nullptr_t>)
-            {
-                return "null";
-            }
-            else if constexpr ( std::is_same_v<T , std::string>)
-            {
-                return arg;
-            }
-            else {
-                return std::to_string(arg);
-            }
-        },literal);
+        if(literal.type() == typeid(bool))        
+        {
+            return ((std::any_cast<bool>(literal))? "true" : "false");
+        }
 
-        return literalStr;
+       if(literal.type() == typeid(double))
+       {
+            return std::to_string(std::any_cast<double>(literal));
+       }
+
+       if(literal.type() == typeid(std::nullptr_t))
+       {
+            return "nil";
+       }
+
+       if(literal.type() == typeid(std::string))
+       {
+            return std::any_cast<std::string>(literal);
+       }
+    
     }
 };
 
