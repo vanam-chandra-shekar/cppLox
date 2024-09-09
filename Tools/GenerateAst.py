@@ -1,12 +1,14 @@
 import os
 
-def define_ast(outDir , baseClass : str, subClasses : str ):
+def define_ast(outDir , baseClass : str, subClasses : str  , includes=""):
     subClassMetaData = parse(subClasses)
 
     path = os.path.join(outDir , baseClass+".hpp")
 
     writer = open(path , 'w' , encoding='UTF-8')
-
+    writer.write("#pragma once\n")
+    if(len(includes)):
+        writer.write(f'#include "{includes}"\n')
     writeClassDeclarations(writer , baseClass , subClassMetaData)
 
     writeVisitorImpl(writer , baseClass , subClassMetaData)
@@ -39,7 +41,6 @@ def parse(subClasses : str):
 
 def writeClassDeclarations(writer , baseClass , data):
 
-    writer.write("#pragma once\n")
     writer.write("#include <memory>\n")
     writer.write("#include <any>\n")
     writer.write("#include \"Token.hpp\"\n\n")
@@ -106,5 +107,12 @@ define_ast(outDir, "Expr", [
     "Binary   ::: std::shared_ptr<Expr> left , Token op , std::shared_ptr<Expr> right",
     "Grouping ::: std::shared_ptr<Expr> expression",
     "Literal  ::: std::any value",
-    "Unary    ::: Token op, std::shared_ptr<Expr> right"
+    "Unary    ::: Token op, std::shared_ptr<Expr> right",
+    "Variable ::: Token name"
 ])
+
+define_ast(outDir , "Stmt" , [
+    "Expression     ::: std::shared_ptr<Expr> expression",
+    "Print          ::: std::shared_ptr<Expr> expression",
+    "Var            ::: Token name, std::shared_ptr<Expr> initializer"
+] , "Expr.hpp")

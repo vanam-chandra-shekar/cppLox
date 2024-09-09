@@ -20,9 +20,9 @@ void  Lox::main(int argL , char** arg)
     {
         std::cout<<"Usage: main [script] \n";
     }
-    else if(argL == 2)
+    else if(argL == 1)
     {
-        runFile(arg[1]);
+        runFile("script.txt");
     }
     else {
         runPromt();
@@ -72,13 +72,13 @@ void Lox::run(const std::string& src)
 
     Parser parser(tokens);
     
-    std::shared_ptr<Expr> expr = parser.parse();
+    std::vector<std::shared_ptr<Stmt>> statements = parser.parse();
 
     if(hadError) return;
 
     // std::cout<<AstPrinter{}.print(expr)<<"\n";
         
-   interpreter.interpret(expr);
+   interpreter.interpret(statements);
 
 
 }

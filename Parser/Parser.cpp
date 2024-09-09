@@ -1,20 +1,75 @@
 #include "Parser.hpp"
+#include "Stmt.hpp"
 #include <memory>
 // #include <cassert>
 
 
-std::shared_ptr<Expr> Parser::parse()
+std::vector<std::shared_ptr<Stmt>> Parser::parse()
+{
+    std::vector<std::shared_ptr<Stmt>> statements;
+    while(!isAtEnd())
+    {
+        statements.push_back(declaration());
+    }
+
+    return statements;
+    
+}
+
+std::shared_ptr<Stmt> Parser::declaration()
 {
     try
     {
-        return expression();
+        if(match(TVAR)) return valDeclaration();
+
+        return statement();
     }
-    catch(ParseError error)
+    catch(ParseError err)
     {
+        synchronize();
         return nullptr;
     }
-    
 }
+
+std::shared_ptr<Stmt> Parser::statement()
+{
+    if(match(TPRINT)) return printStatement();
+
+    return expressionStatement();
+}
+
+std::shared_ptr<Stmt> Parser::valDeclaration()
+{
+    Token name = consume(TIDENTIFIER,"Expect variable name.");
+
+    std::shared_ptr<Expr> init = nullptr;
+
+    if(match(TEQUAL))
+    {
+        init = expression();
+    }
+
+    consume(TSEMICOLON,"Expect ';' after variable declaration.");
+    return std::make_shared<Stmt::Var>(name , init);
+
+}
+
+std::shared_ptr<Stmt> Parser::printStatement()
+{
+    std::shared_ptr<Expr> value = expression();
+    consume(TSEMICOLON , "Expect ';' after value.");
+
+    return std::make_shared<Stmt::Print>(value);
+}
+
+std::shared_ptr<Stmt> Parser::expressionStatement()
+{
+    std::shared_ptr<Expr> expr = expression();
+    consume(TSEMICOLON,"Expect ';' after Expression.");
+
+    return std::make_shared<Stmt::Expression>(expr);
+}
+
 
 
 std::shared_ptr<Expr> Parser::expression()
@@ -107,6 +162,11 @@ std::shared_ptr<Expr> Parser::primary()
         std::shared_ptr<Expr> expr = expression();
         consume(TRIGHT_PAREN , "Expected ')' after Expression");
         return std::make_shared<Expr::Grouping>(expr);
+    }
+
+    if(match(TIDENTIFIER))
+    {
+        return std::make_shared<Expr::Variable>(previous());
     }
 
     throw error(peek() , "Expected expression.");

@@ -4,6 +4,7 @@
 #include "Expr.hpp"
 #include <vector>
 #include <cassert>
+#include "Stmt.hpp"
 
 
 
@@ -27,6 +28,17 @@ private:
     std::shared_ptr<Expr> factor();
     std::shared_ptr<Expr> unary();
     std::shared_ptr<Expr> primary();
+
+    std::shared_ptr<Stmt> declaration();
+    std::shared_ptr<Stmt> statement();
+
+    std::shared_ptr<Stmt> valDeclaration();
+
+
+
+    std::shared_ptr<Stmt> printStatement();
+    std::shared_ptr<Stmt> expressionStatement();
+
 
     template <class ... T>
     inline bool match(T ... type)
@@ -113,6 +125,6 @@ public:
     Parser(const std::vector<Token>& _tokens)
         : tokens(_tokens) {}
     
-    std::shared_ptr<Expr> parse();
+    std::vector<std::shared_ptr<Stmt>> parse();
     
 };

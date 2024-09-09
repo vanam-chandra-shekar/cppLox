@@ -223,7 +223,7 @@ void Scanner::scanToken()
                 identifier();
             }
             else{
-                Lox::error(line, "Unexpected character .");
+                Lox::error(line, std::string("Unexpected character '") + c +"' .");
             }
     }
 

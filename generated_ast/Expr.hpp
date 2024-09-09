@@ -10,6 +10,7 @@ public:
 	class Grouping;
 	class Literal;
 	class Unary;
+	class Variable;
 
 	virtual std::any accept(Visitor& visitor) = 0;
 	virtual ~Expr() = default;
@@ -21,6 +22,7 @@ public:
 	virtual std::any visitGroupingExpr(std::shared_ptr<Expr::Grouping> expr) = 0;
 	virtual std::any visitLiteralExpr(std::shared_ptr<Expr::Literal> expr) = 0;
 	virtual std::any visitUnaryExpr(std::shared_ptr<Expr::Unary> expr) = 0;
+	virtual std::any visitVariableExpr(std::shared_ptr<Expr::Variable> expr) = 0;
 
 	virtual ~Visitor() = default;
 };
@@ -73,6 +75,18 @@ public:
 
 	inline std::any accept(Visitor& visitor) override {
 		return visitor.visitUnaryExpr(shared_from_this());
+	}
+};
+
+class Expr::Variable : public Expr , public std::enable_shared_from_this<Variable> {
+public:
+	Token name;
+
+	Variable(Token _name)
+		: name(std::move(_name)) {}
+
+	inline std::any accept(Visitor& visitor) override {
+		return visitor.visitVariableExpr(shared_from_this());
 	}
 };
 

@@ -66,17 +66,32 @@ std::string stringify(const std::any& object) {
     return "Error in stringify: object type not recognized.";
 }
 
-void Interpreter::interpret(std::shared_ptr<Expr> expr)
+void Interpreter::interpret(const std::vector<std::shared_ptr<Stmt>>& statements)
 {
-    if(expr == nullptr) return;
-    try{
-        std::any value = evaluate(expr);
-        std::cout<< stringify(value)<<"\n";
-    }
-    catch(RuntimeError err)
+    try
     {
-        Lox::runTimeError(err);
+        for(std::shared_ptr<Stmt> statement : statements)
+        {
+            execute(statement);
+        }
     }
+    catch(RuntimeError error)
+    {
+        Lox::runTimeError(error);
+    }
+}
+
+std::any Interpreter::visitPrintStmt(std::shared_ptr<Stmt::Print> stmt)
+{
+    std::any value = evaluate(stmt->expression);
+    std::cout<<stringify(value)<<"\n";
+    return nullptr;
+}
+
+std::any Interpreter::visitExpressionStmt(std::shared_ptr<Stmt::Expression> stmt)
+{
+    evaluate(stmt->expression);
+    return nullptr;
 }
 
 std::any Interpreter::visitLiteralExpr(std::shared_ptr<Expr::Literal> expr)
