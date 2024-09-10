@@ -70,7 +70,7 @@ void Interpreter::interpret(const std::vector<std::shared_ptr<Stmt>>& statements
 {
     try
     {
-        for(std::shared_ptr<Stmt> statement : statements)
+        for(auto& statement : statements)
         {
             execute(statement);
         }
@@ -81,11 +81,38 @@ void Interpreter::interpret(const std::vector<std::shared_ptr<Stmt>>& statements
     }
 }
 
+std::any Interpreter::visitVarStmt(std::shared_ptr<Stmt::Var> stmt)
+{
+    std::any value = nullptr;
+
+    if(stmt->initializer != nullptr)
+    {
+        value = evaluate(stmt->initializer);
+    }
+
+    environment->define(stmt->name.lexeme, value);
+    return nullptr;
+}
+
+std::any Interpreter::visitAssignExpr(std::shared_ptr<Expr::Assign> expr)
+{
+    std::any value = evaluate(expr->value);
+    environment->assign(expr->name , value);
+    return value;
+}
+
+
+std::any Interpreter::visitVariableExpr(std::shared_ptr<Expr::Variable> expr)
+{
+    return environment->get(expr->name);
+}
+
+
 std::any Interpreter::visitPrintStmt(std::shared_ptr<Stmt::Print> stmt)
 {
     std::any value = evaluate(stmt->expression);
     std::cout<<stringify(value)<<"\n";
-    return nullptr;
+    return {};
 }
 
 std::any Interpreter::visitExpressionStmt(std::shared_ptr<Stmt::Expression> stmt)

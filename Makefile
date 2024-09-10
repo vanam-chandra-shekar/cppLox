@@ -1,4 +1,4 @@
-INCLUDEDIR = Lox Scanner generated_ast Parser AstPrinter Interpreter
+INCLUDEDIR = Lox Scanner generated_ast Parser AstPrinter Interpreter Environment
 SOURCEDIR = . Lox Scanner generated_ast Parser Interpreter
 LIBDIR = 
 BINDIR = bin

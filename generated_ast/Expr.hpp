@@ -6,6 +6,7 @@
 class Expr {
 public:
 	class Visitor;
+	class Assign;
 	class Binary;
 	class Grouping;
 	class Literal;
@@ -18,6 +19,7 @@ public:
 
 class Expr::Visitor{
 public:
+	virtual std::any visitAssignExpr(std::shared_ptr<Expr::Assign> expr) = 0;
 	virtual std::any visitBinaryExpr(std::shared_ptr<Expr::Binary> expr) = 0;
 	virtual std::any visitGroupingExpr(std::shared_ptr<Expr::Grouping> expr) = 0;
 	virtual std::any visitLiteralExpr(std::shared_ptr<Expr::Literal> expr) = 0;
@@ -25,6 +27,19 @@ public:
 	virtual std::any visitVariableExpr(std::shared_ptr<Expr::Variable> expr) = 0;
 
 	virtual ~Visitor() = default;
+};
+
+class Expr::Assign : public Expr , public std::enable_shared_from_this<Assign> {
+public:
+	Token name;
+	std::shared_ptr<Expr> value;
+
+	Assign(Token _name, std::shared_ptr<Expr> _value)
+		: name(std::move(_name)), value(std::move(_value)) {}
+
+	inline std::any accept(Visitor& visitor) override {
+		return visitor.visitAssignExpr(shared_from_this());
+	}
 };
 
 class Expr::Binary : public Expr , public std::enable_shared_from_this<Binary> {

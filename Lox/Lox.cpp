@@ -4,8 +4,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <sstream>
 
-#include "AstPrinter.hpp"
 #include "Scanner.hpp"
 #include "Parser.hpp"
 
@@ -20,9 +20,9 @@ void  Lox::main(int argL , char** arg)
     {
         std::cout<<"Usage: main [script] \n";
     }
-    else if(argL == 1)
+    else if(argL == 2)
     {
-        runFile("script.txt");
+        runFile(arg[1]);
     }
     else {
         runPromt();
@@ -40,14 +40,10 @@ void Lox::runFile(const std::string &path)
         exit(EXIT_FAILURE);
     }
 
-    std::string str;
-    file.seekg(0 , std::ios::end); //seting to end;
-    auto sz = file.tellg();
-    str.resize(sz); //reserving memory for string tellg tells size of a stream from start to current
-    file.seekg(0 , std::ios::beg); //seting to end;
-    file.read(&str[0], sz);
+    std::stringstream ss;
+    ss<<file.rdbuf();
 
-    run(str);
+    run(ss.str());
 
     if(hadError) exit(65);
     if(hadRuntimeError) exit(70);

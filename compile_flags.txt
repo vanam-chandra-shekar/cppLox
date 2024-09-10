@@ -5,4 +5,5 @@
 -I./Parser
 -I./AstPrinter
 -I./Interpreter
+-I./Environment
 --std=c++20

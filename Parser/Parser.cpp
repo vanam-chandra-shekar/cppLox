@@ -50,7 +50,7 @@ std::shared_ptr<Stmt> Parser::valDeclaration()
     }
 
     consume(TSEMICOLON,"Expect ';' after variable declaration.");
-    return std::make_shared<Stmt::Var>(name , init);
+    return std::make_shared<Stmt::Var>(std::move(name) , init);
 
 }
 
@@ -74,8 +74,31 @@ std::shared_ptr<Stmt> Parser::expressionStatement()
 
 std::shared_ptr<Expr> Parser::expression()
 {
-    return equality();
+    return assignment();
 }
+
+std::shared_ptr<Expr> Parser::assignment()
+{
+    std::shared_ptr<Expr> expr = equality();
+
+    if(match(TEQUAL))
+    {
+        Token equals = previous();
+        std::shared_ptr<Expr> value = assignment();
+
+        if(Expr::Variable* e = dynamic_cast<Expr::Variable*>(expr.get()))
+        {
+            Token name = e->name;;
+            return std::make_shared<Expr::Assign>(name , value);
+        }
+
+        error(std::move(equals), "Invalid assignment target.");
+    }
+
+    return expr;
+
+}
+
 
 std::shared_ptr<Expr> Parser::equality()
 {

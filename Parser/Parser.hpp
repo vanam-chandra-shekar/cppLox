@@ -28,6 +28,7 @@ private:
     std::shared_ptr<Expr> factor();
     std::shared_ptr<Expr> unary();
     std::shared_ptr<Expr> primary();
+    std::shared_ptr<Expr> assignment();
 
     std::shared_ptr<Stmt> declaration();
     std::shared_ptr<Stmt> statement();
