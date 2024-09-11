@@ -1,6 +1,6 @@
 import os
 
-def define_ast(outDir , baseClass : str, subClasses : str  , includes=""):
+def define_ast(outDir , baseClass : str, subClasses : str  , includes=[]):
     subClassMetaData = parse(subClasses)
 
     path = os.path.join(outDir , baseClass+".hpp")
@@ -8,7 +8,11 @@ def define_ast(outDir , baseClass : str, subClasses : str  , includes=""):
     writer = open(path , 'w' , encoding='UTF-8')
     writer.write("#pragma once\n")
     if(len(includes)):
-        writer.write(f'#include "{includes}"\n')
+        for i in includes:
+            if(i[0] != '<'):
+                writer.write(f'#include "{i}"\n')
+            else:
+                writer.write(f'#include {i}\n')
     writeClassDeclarations(writer , baseClass , subClassMetaData)
 
     writeVisitorImpl(writer , baseClass , subClassMetaData)
@@ -115,5 +119,6 @@ define_ast(outDir, "Expr", [
 define_ast(outDir , "Stmt" , [
     "Expression     ::: std::shared_ptr<Expr> expression",
     "Print          ::: std::shared_ptr<Expr> expression",
-    "Var            ::: Token name, std::shared_ptr<Expr> initializer"
-] , "Expr.hpp")
+    "Var            ::: Token name, std::shared_ptr<Expr> initializer",
+    "Block          ::: std::vector<std::shared_ptr<Stmt>> statements"
+] , ["Expr.hpp" , "<vector>"])

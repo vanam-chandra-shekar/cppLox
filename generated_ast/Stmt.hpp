@@ -1,5 +1,6 @@
 #pragma once
 #include "Expr.hpp"
+#include <vector>
 #include <memory>
 #include <any>
 #include "Token.hpp"
@@ -10,6 +11,7 @@ public:
 	class Expression;
 	class Print;
 	class Var;
+	class Block;
 
 	virtual std::any accept(Visitor& visitor) = 0;
 	virtual ~Stmt() = default;
@@ -20,6 +22,7 @@ public:
 	virtual std::any visitExpressionStmt(std::shared_ptr<Stmt::Expression> stmt) = 0;
 	virtual std::any visitPrintStmt(std::shared_ptr<Stmt::Print> stmt) = 0;
 	virtual std::any visitVarStmt(std::shared_ptr<Stmt::Var> stmt) = 0;
+	virtual std::any visitBlockStmt(std::shared_ptr<Stmt::Block> stmt) = 0;
 
 	virtual ~Visitor() = default;
 };
@@ -58,6 +61,18 @@ public:
 
 	inline std::any accept(Visitor& visitor) override {
 		return visitor.visitVarStmt(shared_from_this());
+	}
+};
+
+class Stmt::Block : public Stmt , public std::enable_shared_from_this<Block> {
+public:
+	std::vector<std::shared_ptr<Stmt>> statements;
+
+	Block(std::vector<std::shared_ptr<Stmt>> _statements)
+		: statements(std::move(_statements)) {}
+
+	inline std::any accept(Visitor& visitor) override {
+		return visitor.visitBlockStmt(shared_from_this());
 	}
 };
 

@@ -81,6 +81,35 @@ void Interpreter::interpret(const std::vector<std::shared_ptr<Stmt>>& statements
     }
 }
 
+void Interpreter::executeBlock(const std::vector<std::shared_ptr<Stmt>>& statements , std::shared_ptr<Environment> environment)
+{
+    std::shared_ptr<Environment> previous = this->environment;
+
+    try
+    {
+        this->environment =  environment;
+
+        for(const std::shared_ptr<Stmt>& statement : statements)
+        {
+            execute(statement);
+        }
+    }
+    catch(...)
+    {
+        this->environment = previous;
+        throw;
+    }
+
+    this->environment = previous;
+
+}
+
+std::any Interpreter::visitBlockStmt(std::shared_ptr<Stmt::Block> stmt)
+{
+    executeBlock(stmt->statements , std::make_shared<Environment>(environment));
+    return {};
+}
+
 std::any Interpreter::visitVarStmt(std::shared_ptr<Stmt::Var> stmt)
 {
     std::any value = nullptr;

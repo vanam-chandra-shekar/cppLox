@@ -1,5 +1,6 @@
 #include "Parser.hpp"
 #include "Stmt.hpp"
+#include "TokenType.hpp"
 #include <memory>
 // #include <cassert>
 
@@ -14,6 +15,19 @@ std::vector<std::shared_ptr<Stmt>> Parser::parse()
 
     return statements;
     
+}
+
+std::vector<std::shared_ptr<Stmt>> Parser::block()
+{
+    std::vector<std::shared_ptr<Stmt>> statements;
+
+    while(!check(TRIGHT_BRACE) && !isAtEnd())
+    {
+        statements.emplace_back(declaration());
+    }
+
+    consume(TRIGHT_BRACE , "Expect  '}' after block.");
+    return statements;
 }
 
 std::shared_ptr<Stmt> Parser::declaration()
@@ -34,6 +48,7 @@ std::shared_ptr<Stmt> Parser::declaration()
 std::shared_ptr<Stmt> Parser::statement()
 {
     if(match(TPRINT)) return printStatement();
+    if(match(TLEFT_BRACE)) return std::make_shared<Stmt::Block>(block());
 
     return expressionStatement();
 }

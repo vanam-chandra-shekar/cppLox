@@ -12,8 +12,17 @@ class Environment : public std::enable_shared_from_this<Environment>
 private:
     std::unordered_map<std::string , std::any> values;
 
+    std::shared_ptr<Environment> enclosing;
+
 
 public:
+
+    Environment()
+        : enclosing(nullptr){}
+    
+    Environment(std::shared_ptr<Environment> _enclosing)
+        : enclosing(std::move(_enclosing)) {}
+
     inline void define(const std::string& name , std::any value)
     {
         values[name] = std::move(value);
@@ -26,6 +35,8 @@ public:
         {
             return elem->second;
         }
+
+        if(enclosing != nullptr) return enclosing->get(name);
 
         throw RuntimeError(name ,"Undefined variable '"+name.lexeme+"'." );
     }
