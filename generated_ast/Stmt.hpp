@@ -12,6 +12,8 @@ public:
 	class Print;
 	class Var;
 	class Block;
+	class If;
+	class While;
 
 	virtual std::any accept(Visitor& visitor) = 0;
 	virtual ~Stmt() = default;
@@ -23,6 +25,8 @@ public:
 	virtual std::any visitPrintStmt(std::shared_ptr<Stmt::Print> stmt) = 0;
 	virtual std::any visitVarStmt(std::shared_ptr<Stmt::Var> stmt) = 0;
 	virtual std::any visitBlockStmt(std::shared_ptr<Stmt::Block> stmt) = 0;
+	virtual std::any visitIfStmt(std::shared_ptr<Stmt::If> stmt) = 0;
+	virtual std::any visitWhileStmt(std::shared_ptr<Stmt::While> stmt) = 0;
 
 	virtual ~Visitor() = default;
 };
@@ -73,6 +77,33 @@ public:
 
 	inline std::any accept(Visitor& visitor) override {
 		return visitor.visitBlockStmt(shared_from_this());
+	}
+};
+
+class Stmt::If : public Stmt , public std::enable_shared_from_this<If> {
+public:
+	std::shared_ptr<Expr> expr;
+	std::shared_ptr<Stmt> thenBranch;
+	std::shared_ptr<Stmt> elseBranch;
+
+	If(std::shared_ptr<Expr> _expr, std::shared_ptr<Stmt> _thenBranch, std::shared_ptr<Stmt> _elseBranch)
+		: expr(std::move(_expr)), thenBranch(std::move(_thenBranch)), elseBranch(std::move(_elseBranch)) {}
+
+	inline std::any accept(Visitor& visitor) override {
+		return visitor.visitIfStmt(shared_from_this());
+	}
+};
+
+class Stmt::While : public Stmt , public std::enable_shared_from_this<While> {
+public:
+	std::shared_ptr<Expr> condition;
+	std::shared_ptr<Stmt> body;
+
+	While(std::shared_ptr<Expr> _condition, std::shared_ptr<Stmt> _body)
+		: condition(std::move(_condition)), body(std::move(_body)) {}
+
+	inline std::any accept(Visitor& visitor) override {
+		return visitor.visitWhileStmt(shared_from_this());
 	}
 };
 

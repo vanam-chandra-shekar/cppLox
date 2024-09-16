@@ -113,12 +113,15 @@ define_ast(outDir, "Expr", [
     "Grouping ::: std::shared_ptr<Expr> expression",
     "Literal  ::: std::any value",
     "Unary    ::: Token op, std::shared_ptr<Expr> right",
-    "Variable ::: Token name"
+    "Variable ::: Token name",
+    "Logical  ::: std::shared_ptr<Expr> left , Token op , std::shared_ptr<Expr> right"
 ])
 
 define_ast(outDir , "Stmt" , [
     "Expression     ::: std::shared_ptr<Expr> expression",
     "Print          ::: std::shared_ptr<Expr> expression",
     "Var            ::: Token name, std::shared_ptr<Expr> initializer",
-    "Block          ::: std::vector<std::shared_ptr<Stmt>> statements"
+    "Block          ::: std::vector<std::shared_ptr<Stmt>> statements",
+    "If             ::: std::shared_ptr<Expr> expr , std::shared_ptr<Stmt> thenBranch , std::shared_ptr<Stmt> elseBranch",
+    "While          ::: std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> body",
 ] , ["Expr.hpp" , "<vector>"])

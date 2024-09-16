@@ -110,6 +110,36 @@ std::any Interpreter::visitBlockStmt(std::shared_ptr<Stmt::Block> stmt)
     return {};
 }
 
+std::any Interpreter::visitWhileStmt(std::shared_ptr<Stmt::While> stmt)
+{
+    std::any cond = evaluate(stmt->condition);
+
+    while(isTruthy(cond))
+    {
+        execute(stmt->body);
+        cond = evaluate(stmt->condition);
+    }
+
+    return {};
+
+}
+
+
+std::any Interpreter::visitIfStmt(std::shared_ptr<Stmt::If> stmt)
+{
+    std::any cond = evaluate(stmt->expr);
+    if(isTruthy(cond))
+    {
+        execute(stmt->thenBranch);
+    }
+    else if(stmt->elseBranch != nullptr)
+    {
+        execute(stmt->elseBranch);
+    }
+    return {};
+}
+
+
 std::any Interpreter::visitVarStmt(std::shared_ptr<Stmt::Var> stmt)
 {
     std::any value = nullptr;
@@ -175,6 +205,25 @@ std::any Interpreter::visitUnaryExpr(std::shared_ptr<Expr::Unary> expr)
 
     return {};
 
+}
+
+std::any Interpreter::visitLogicalExpr(std::shared_ptr<Expr::Logical> expr)
+{
+    std::any left = evaluate(expr->left);
+
+    if(expr->op.type == TOR)
+    {
+        if(isTruthy(left))
+        {
+            return left;
+        }
+    }
+    else
+    {
+        if(!isTruthy(left)) return left;
+    }
+
+    return evaluate(expr->right);
 }
 
 std::any Interpreter::visitBinaryExpr(std::shared_ptr<Expr::Binary> expr)

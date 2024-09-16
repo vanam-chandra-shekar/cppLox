@@ -17,11 +17,16 @@ public:
     std::any visitUnaryExpr(std::shared_ptr<Expr::Unary> expr) override;
     std::any visitGroupingExpr(std::shared_ptr<Expr::Grouping> expr) override;
     std::any visitVariableExpr(std::shared_ptr<Expr::Variable> expr) override;
+    std::any visitLogicalExpr(std::shared_ptr<Expr::Logical> expr) override;
 
     std::any visitPrintStmt(std::shared_ptr<Stmt::Print> stmt) override;
     std::any visitExpressionStmt(std::shared_ptr<Stmt::Expression> stmt) override;
     std::any visitVarStmt(std::shared_ptr<Stmt::Var> stmt) override;
     std::any visitBlockStmt(std::shared_ptr<Stmt::Block> stmt) override;
+
+    //control flow implementation
+    std::any visitIfStmt(std::shared_ptr<Stmt::If> stmt) override;
+    std::any visitWhileStmt(std::shared_ptr<Stmt::While> stmt) override;
 
 
     void interpret(const std::vector<std::shared_ptr<Stmt>>& statements);
