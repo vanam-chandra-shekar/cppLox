@@ -51,6 +51,12 @@ public:
             return;
         }
 
+        if(enclosing != nullptr)
+        {
+            enclosing->assign(name, std::move(value));
+            return;
+        }
+
         throw RuntimeError(name , "Undefined variable '"+ name.lexeme+"'.");
 
     }
