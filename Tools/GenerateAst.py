@@ -114,8 +114,9 @@ define_ast(outDir, "Expr", [
     "Literal  ::: std::any value",
     "Unary    ::: Token op, std::shared_ptr<Expr> right",
     "Variable ::: Token name",
-    "Logical  ::: std::shared_ptr<Expr> left , Token op , std::shared_ptr<Expr> right"
-])
+    "Logical  ::: std::shared_ptr<Expr> left , Token op , std::shared_ptr<Expr> right",
+    "Call     ::: std::shared_ptr<Expr> callee , Token paren , std::vector<std::shared_ptr<Expr>> arguments"
+],["<vector>"])
 
 define_ast(outDir , "Stmt" , [
     "Expression     ::: std::shared_ptr<Expr> expression",

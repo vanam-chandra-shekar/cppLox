@@ -18,6 +18,7 @@ public:
     std::any visitGroupingExpr(std::shared_ptr<Expr::Grouping> expr) override;
     std::any visitVariableExpr(std::shared_ptr<Expr::Variable> expr) override;
     std::any visitLogicalExpr(std::shared_ptr<Expr::Logical> expr) override;
+    std::any visitCallExpr(std::shared_ptr<Expr::Call> expr) override;
 
     std::any visitPrintStmt(std::shared_ptr<Stmt::Print> stmt) override;
     std::any visitExpressionStmt(std::shared_ptr<Stmt::Expression> stmt) override;

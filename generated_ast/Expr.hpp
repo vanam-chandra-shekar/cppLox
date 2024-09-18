@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include <memory>
 #include <any>
 #include "Token.hpp"
@@ -13,6 +14,7 @@ public:
 	class Unary;
 	class Variable;
 	class Logical;
+	class Call;
 
 	virtual std::any accept(Visitor& visitor) = 0;
 	virtual ~Expr() = default;
@@ -27,6 +29,7 @@ public:
 	virtual std::any visitUnaryExpr(std::shared_ptr<Expr::Unary> expr) = 0;
 	virtual std::any visitVariableExpr(std::shared_ptr<Expr::Variable> expr) = 0;
 	virtual std::any visitLogicalExpr(std::shared_ptr<Expr::Logical> expr) = 0;
+	virtual std::any visitCallExpr(std::shared_ptr<Expr::Call> expr) = 0;
 
 	virtual ~Visitor() = default;
 };
@@ -118,6 +121,20 @@ public:
 
 	inline std::any accept(Visitor& visitor) override {
 		return visitor.visitLogicalExpr(shared_from_this());
+	}
+};
+
+class Expr::Call : public Expr , public std::enable_shared_from_this<Call> {
+public:
+	std::shared_ptr<Expr> callee;
+	Token paren;
+	std::vector<std::shared_ptr<Expr>> arguments;
+
+	Call(std::shared_ptr<Expr> _callee, Token _paren, std::vector<std::shared_ptr<Expr>> _arguments)
+		: callee(std::move(_callee)), paren(std::move(_paren)), arguments(std::move(_arguments)) {}
+
+	inline std::any accept(Visitor& visitor) override {
+		return visitor.visitCallExpr(shared_from_this());
 	}
 };
 

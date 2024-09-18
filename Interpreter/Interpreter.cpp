@@ -3,6 +3,7 @@
 
 #include "Lox.hpp"
 #include "Interpreter.hpp"
+#include "LoxCallable.hpp"
 #include "TokenType.hpp"
 
 
@@ -291,4 +292,36 @@ std::any Interpreter::visitBinaryExpr(std::shared_ptr<Expr::Binary> expr)
     }
 
     return nullptr;
+}
+
+std::any Interpreter::visitCallExpr(std::shared_ptr<Expr::Call> expr)
+{
+    std::any callee = evaluate(expr->callee);
+
+    std::vector<std::any> arguments;
+    for(std::shared_ptr<Expr>& argument : expr->arguments)
+    {
+        arguments.push_back(argument);
+    }
+
+    std::shared_ptr<LoxCallable> function;
+
+    if(callee.type() == typeid(std::shared_ptr<LoxCallable>))
+    {
+        function = std::any_cast<std::shared_ptr<LoxCallable>>(callee);
+    }
+    else
+    {
+        throw RuntimeError(expr->paren , "Can only call on classes and functions.");
+    }
+
+    if(arguments.size() != function->arity())
+    {
+        throw RuntimeError(expr->paren , "Expected "+std::to_string(function->arity())
+                +" arguments but got " + std::to_string(arguments.size()) + ".");
+    }
+
+
+
+    return function->call(*this , std::move(arguments));
 }
