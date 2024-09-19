@@ -36,6 +36,7 @@ std::shared_ptr<Stmt> Parser::declaration()
     try
     {
         if(match(TVAR)) return valDeclaration();
+        if(match(TFUN)) return function("function");
 
         return statement();
     }
@@ -44,6 +45,35 @@ std::shared_ptr<Stmt> Parser::declaration()
         synchronize();
         return nullptr;
     }
+}
+
+std::shared_ptr<Stmt::Function> Parser::function(const std::string& kind)
+{
+    Token name = consume(TIDENTIFIER , "Expect "+kind+" name.");
+    consume(TLEFT_PAREN , "Expect '(' after "+kind+" name.");
+    std::vector<Token> parameters;
+
+    if(!check(TRIGHT_PAREN))
+    {
+        do
+        {
+            if(parameters.size() >= 255)
+            {
+                error(peek() , "Can't have more than 255 parameters.");
+            }
+
+            parameters.push_back(consume(TIDENTIFIER , "Expect parameter name."));
+
+
+        } while (match(TCOMMA));
+        
+    }
+    consume(TRIGHT_PAREN , "Expect ')' after parameters.");
+
+    consume(TLEFT_BRACE , "Expect '{' before "+kind+" body.");
+    std::vector<std::shared_ptr<Stmt>> body = block();
+
+    return std::make_shared<Stmt::Function>(name , parameters , body);
 }
 
 std::shared_ptr<Stmt> Parser::statement()

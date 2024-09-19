@@ -325,3 +325,8 @@ std::any Interpreter::visitCallExpr(std::shared_ptr<Expr::Call> expr)
 
     return function->call(*this , std::move(arguments));
 }
+
+std::any Interpreter::visitFunctionStmt(std::shared_ptr<Stmt::Function> stmt)
+{
+    
+}

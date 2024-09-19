@@ -40,6 +40,7 @@ private:
     std::vector<std::shared_ptr<Stmt>> block();
 
     std::shared_ptr<Stmt> valDeclaration();
+    std::shared_ptr<Stmt::Function> function(const std::string& kind);
 
     //control flow
     std::shared_ptr<Stmt> ifStatement();

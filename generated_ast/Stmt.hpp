@@ -14,6 +14,7 @@ public:
 	class Block;
 	class If;
 	class While;
+	class Function;
 
 	virtual std::any accept(Visitor& visitor) = 0;
 	virtual ~Stmt() = default;
@@ -27,6 +28,7 @@ public:
 	virtual std::any visitBlockStmt(std::shared_ptr<Stmt::Block> stmt) = 0;
 	virtual std::any visitIfStmt(std::shared_ptr<Stmt::If> stmt) = 0;
 	virtual std::any visitWhileStmt(std::shared_ptr<Stmt::While> stmt) = 0;
+	virtual std::any visitFunctionStmt(std::shared_ptr<Stmt::Function> stmt) = 0;
 
 	virtual ~Visitor() = default;
 };
@@ -104,6 +106,20 @@ public:
 
 	inline std::any accept(Visitor& visitor) override {
 		return visitor.visitWhileStmt(shared_from_this());
+	}
+};
+
+class Stmt::Function : public Stmt , public std::enable_shared_from_this<Function> {
+public:
+	Token name;
+	std::vector<Token> params;
+	std::vector<std::shared_ptr<Stmt>> body;
+
+	Function(Token _name, std::vector<Token> _params, std::vector<std::shared_ptr<Stmt>> _body)
+		: name(std::move(_name)), params(std::move(_params)), body(std::move(_body)) {}
+
+	inline std::any accept(Visitor& visitor) override {
+		return visitor.visitFunctionStmt(shared_from_this());
 	}
 };
 
