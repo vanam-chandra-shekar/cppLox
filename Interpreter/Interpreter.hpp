@@ -15,8 +15,7 @@ class nativeClock : public LoxCallable
     std::any call(Interpreter& interepreter , std::vector<std::any> arguments ) override
     {
         auto ticks = std::chrono::system_clock::now().time_since_epoch();
-
-        return std::chrono::duration_cast<std::chrono::milliseconds>(ticks);
+        return  static_cast<double>(ticks.count());
     }
 
     std::string toString() override
@@ -31,9 +30,15 @@ class Interpreter : public Expr::Visitor , public Stmt::Visitor
 
 public:
 
+    std::shared_ptr<Environment> global {new Environment};
+    std::shared_ptr<Environment> environment = global;
+
+    void executeBlock(const std::vector<std::shared_ptr<Stmt>>& statements , std::shared_ptr<Environment> environment);
+
     Interpreter()
     {
-        global->define("Clock", std::shared_ptr<nativeClock>{});
+        std::shared_ptr<LoxCallable> lc = std::make_shared<nativeClock>();
+        global->define("clock", lc);
     }
 
 
@@ -54,7 +59,7 @@ public:
     //control flow implementation
     std::any visitIfStmt(std::shared_ptr<Stmt::If> stmt) override;
     std::any visitWhileStmt(std::shared_ptr<Stmt::While> stmt) override;
-
+    std::any visitReturnStmt(std::shared_ptr<Stmt::Return> stmt) override;
     std::any visitFunctionStmt(std::shared_ptr<Stmt::Function> stmt) override;
 
 
@@ -66,10 +71,8 @@ public:
 
 private:
 
-    std::shared_ptr<Environment> global {new Environment};
-    std::shared_ptr<Environment> environment = global;
 
-    void executeBlock(const std::vector<std::shared_ptr<Stmt>>& statements , std::shared_ptr<Environment> environment);
+
 
     inline std::any evaluate(std::shared_ptr<Expr> expr)
     {

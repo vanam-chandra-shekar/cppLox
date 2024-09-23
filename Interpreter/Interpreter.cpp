@@ -1,9 +1,12 @@
 
 #include <iostream>
+#include <memory>
 
 #include "Lox.hpp"
+#include "LoxReturn.hpp"
 #include "Interpreter.hpp"
 #include "LoxCallable.hpp"
+#include "LoxFunction.hpp"
 #include "TokenType.hpp"
 
 
@@ -62,6 +65,10 @@ std::string stringify(const std::any& object) {
     }
     if (object.type() == typeid(bool)) {
       return std::any_cast<bool>(object) ? "true" : "false";
+    }
+
+    if (object.type() == typeid(std::shared_ptr<LoxCallable>)) {
+      return std::any_cast<std::shared_ptr<LoxCallable>>(object)->toString();
     }
 
     return "Error in stringify: object type not recognized.";
@@ -125,6 +132,13 @@ std::any Interpreter::visitWhileStmt(std::shared_ptr<Stmt::While> stmt)
 
 }
 
+std::any Interpreter::visitReturnStmt(std::shared_ptr<Stmt::Return> stmt)
+{
+    std::any value = nullptr;
+    if(stmt->value != nullptr) value = evaluate(stmt->value);
+
+    throw Return(value);
+}
 
 std::any Interpreter::visitIfStmt(std::shared_ptr<Stmt::If> stmt)
 {
@@ -299,9 +313,9 @@ std::any Interpreter::visitCallExpr(std::shared_ptr<Expr::Call> expr)
     std::any callee = evaluate(expr->callee);
 
     std::vector<std::any> arguments;
-    for(std::shared_ptr<Expr>& argument : expr->arguments)
+    for(const std::shared_ptr<Expr>& argument : expr->arguments)
     {
-        arguments.push_back(argument);
+        arguments.push_back(evaluate(argument));
     }
 
     std::shared_ptr<LoxCallable> function;
@@ -328,5 +342,8 @@ std::any Interpreter::visitCallExpr(std::shared_ptr<Expr::Call> expr)
 
 std::any Interpreter::visitFunctionStmt(std::shared_ptr<Stmt::Function> stmt)
 {
-    
+    std::shared_ptr<LoxCallable> function = std::make_shared<LoxFunction>(stmt , environment);
+    environment->define(stmt->name.lexeme, function);
+
+    return {};
 }

@@ -16,6 +16,7 @@ Interpreter Lox::interpreter;
 
 void  Lox::main(int argL , char** arg)
 {
+#if NDEBUG
     if(argL > 2)
     {
         std::cout<<"Usage: main [script] \n";
@@ -27,6 +28,9 @@ void  Lox::main(int argL , char** arg)
     else {
         runPromt();
     }
+#else
+    runFile("script.txt");
+#endif
 }
 
 void Lox::runFile(const std::string &path)

@@ -125,5 +125,6 @@ define_ast(outDir , "Stmt" , [
     "Block          ::: std::vector<std::shared_ptr<Stmt>> statements",
     "If             ::: std::shared_ptr<Expr> expr , std::shared_ptr<Stmt> thenBranch , std::shared_ptr<Stmt> elseBranch",
     "While          ::: std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> body",
-    "Function       ::: Token name , std::vector<Token> params , std::vector<std::shared_ptr<Stmt>> body"
+    "Function       ::: Token name , std::vector<Token> params , std::vector<std::shared_ptr<Stmt>> body",
+    "Return         ::: Token keyword , std::shared_ptr<Expr> value"
 ] , ["Expr.hpp" , "<vector>"])

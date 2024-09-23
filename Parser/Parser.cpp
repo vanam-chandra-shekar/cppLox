@@ -83,6 +83,7 @@ std::shared_ptr<Stmt> Parser::statement()
     if(match(TIF)) return ifStatement();
     if(match(TWHILE)) return whileStatement();
     if(match(TFOR)) return forStatement();
+    if(match(TRETURN)) return returnStatement();
 
     return expressionStatement();
 }
@@ -146,6 +147,22 @@ std::shared_ptr<Stmt> Parser::forStatement()
     }    
 
     return body;
+}
+
+std::shared_ptr<Stmt> Parser::returnStatement()
+{
+    Token keyword = previous();
+    std::shared_ptr<Expr> value = nullptr;
+
+    if(!check(TSEMICOLON))
+    {
+        value = expression();
+    };
+
+    consume(TSEMICOLON , "Expect ';' after return value.");
+
+    return std::make_shared<Stmt::Return>(keyword , value);
+
 }
 
 std::shared_ptr<Stmt> Parser::whileStatement()
